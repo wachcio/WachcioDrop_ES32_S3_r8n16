@@ -1,5 +1,3 @@
-#define CONFIG_TCPIP_LWIP 1 // fix na ip6_addr_t
-
 #include <Arduino.h>
 #include "ButtonsTask/ButtonsTask.h"
 #include "RTCTask/RTCTask.h"
