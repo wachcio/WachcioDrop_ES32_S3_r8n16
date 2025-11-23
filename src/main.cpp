@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "ButtonsTask/ButtonsTask.h"
 #include "RTCTask/RTCTask.h"
+#include "DisplayTask/DisplayTask.h"
 
 void setup()
 {
@@ -8,30 +9,17 @@ void setup()
     pinMode(LED, OUTPUT);
     delay(50);
 
-    // (Optional) Per-button override example:
-    // ButtonPerConfig pc{};
-    // pc.double_click_ms = 250; ///< Faster double-click just for this button.
-    // btns.setPerConfig(ButtonIndex::TestButton, pc);
+    xTaskCreatePinnedToCore(
+        buttons_task, "buttons",
+        8192, nullptr, 1, nullptr, 1);
 
     xTaskCreatePinnedToCore(
-        buttons_task, // Task function
-        "buttons",    // Task name
-        8192,         // Stack size
-        NULL,         // Task input parameters
-        1,            // Task priority, be carefull when changing this
-        NULL,         // Task handle, add one if you want control over the task (resume or suspend the task)
-        1             // Core to run the task on
-    );
+        RTC_task, "RTC",
+        8192, nullptr, 1, nullptr, 1);
 
     xTaskCreatePinnedToCore(
-        RTC_task, // Task function
-        "RTC",    // Task name
-        8192,     // Stack size
-        NULL,     // Task input parameters
-        1,        // Task priority, be carefull when changing this
-        NULL,     // Task handle, add one if you want control over the task (resume or suspend the task)
-        1         // Core to run the task on
-    );
+        Display_task, "Display",
+        8192, nullptr, 1, nullptr, 1);
 }
 
 void loop()
